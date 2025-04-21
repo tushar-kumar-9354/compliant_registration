@@ -1,0 +1,22 @@
+{% extends 'complaints/base.html' %}
+
+{% block content %}
+
+<h2>Complaint Details</h2>
+
+<p><strong>Category:</strong> {{ complaint.category }}</p>
+<p><strong>Status:</strong> {{ complaint.status }}</p>
+<p><strong>Description:</strong> {{ complaint.description }}</p>
+<p><strong>Address:</strong> {{ complaint.address }}</p>
+<p><strong>Created:</strong> {{ complaint.created_at|date:"d M Y, H:i" }}</p>
+
+<h4>Status History:</h4>
+<ul>
+  {% for update in complaint.status_updates.all %}
+    <li>{{ update.timestamp|date:"d M Y, H:i" }} - <strong>{{ update.new_status }}</strong>: {{ update.note }}</li>
+  {% empty %}
+    <li>No updates yet.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

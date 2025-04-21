@@ -1,0 +1,26 @@
+{% extends 'complaints/base.html' %}
+{% block content %}
+
+<h2>My Complaints</h2>
+
+{% if complaints %}
+  <ul class="list-group">
+    {% for complaint in complaints %}
+      <li class="list-group-item">
+        <a href="{% url 'my_complaints' %}">My Complaints</a>
+
+        <strong>{{ complaint.category|title }}</strong> — {{ complaint.status }}
+        <br>
+        {{ complaint.description }}
+        <br>
+        <small>Submitted: {{ complaint.created_at|date:"d M Y, H:i" }}</small>
+        <br>
+        <a href="{% url 'complaint_detail' complaint.id %}">View Details</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You have not submitted any complaints yet.</p>
+{% endif %}
+
+{% endblock %}

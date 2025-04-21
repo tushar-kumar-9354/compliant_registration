@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Update Complaint Status</h2>
+
+<p><strong>Complaint ID:</strong> {{ complaint.id }}</p>
+<p><strong>Description:</strong> {{ complaint.description }}</p>
+
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Update Status</button>
+</form>
+
+<a href="{% url 'admin-dashboard' %}">Back</a>
+{% endblock %}
+<h3>Status History</h3>
+<ul>
+  {% for update in complaint.status_updates.all %}
+    <li>{{ update.timestamp }} / {{ update.new_status }} by {{ update.updated_by }}</li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,13 @@
+{% extends 'complaints/base.html' %}
+{% load static %} 
+{% block content %}
+<h2>Lodge Complaint</h2>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit Complaint</button>
+
+</form>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<script src="{% static 'js/maps.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+# Python
+*.pyc
+__pycache__/
+
+# Django migrations
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Environment
+.env
+/venv/
+
+# Media and Static files
+/media/
+/staticfiles/
+
+# SQLite (optional but harmless)
+db.sqlite3
+
+# VS Code
+.vscode/
+
+# MacOS / Windows system files
+.DS_Store
+Thumbs.db
