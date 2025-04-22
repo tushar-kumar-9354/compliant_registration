@@ -17,3 +17,7 @@ urlpatterns = [
     path('my-complaints/<int:complaint_id>/', views.complaint_detail, name='complaint_detail'),
     path('admin/update-status/<int:complaint_id>/', views.update_status, name='update_status'),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

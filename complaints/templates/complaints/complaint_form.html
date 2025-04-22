@@ -1,13 +1,100 @@
 {% extends 'complaints/base.html' %}
-{% load static %} 
-{% block content %}
-<h2>Lodge Complaint</h2>
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Submit Complaint</button>
+{% load static %}
 
-</form>
+{% block content %}
+<style>
+  .complaint-form-card {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header.bg-primary {
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    padding: 1.5rem;
+    color: white;
+    text-align: center;
+  }
+
+  .form-control {
+    border-radius: 5px;
+    box-shadow: none;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    font-weight: bold;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+  }
+
+  label.form-label {
+    margin-bottom: 0.3rem;
+    color: #333;
+  }
+
+  .card-footer {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .complaint-form-card {
+      margin: 0 1rem;
+    }
+  }
+</style>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card complaint-form-card">
+        <div class="card-header bg-primary">
+          <h3 class="mb-1">📝 Lodge a Complaint</h3>
+          <p class="mb-0 small">Please fill in the details below</p>
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-bold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success btn-lg mt-3">
+                🚀 Submit Complaint
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          Your complaint will be reviewed by the concerned authority.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 <script src="{% static 'js/maps.js' %}"></script>
 {% endblock %}
