@@ -1,26 +1,81 @@
 {% extends 'complaints/base.html' %}
 {% block content %}
 
-<h2>My Complaints</h2>
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary">📋 My Complaints</h2>
 
-{% if complaints %}
-  <ul class="list-group">
-    {% for complaint in complaints %}
-      <li class="list-group-item">
-        <a href="{% url 'my_complaints' %}">My Complaints</a>
+  <!-- Filter Bar -->
+  <form method="get" class="d-flex mb-4 gap-2">
+    <select name="status" class="form-select w-auto">
+      <option value="">All Statuses</option>
+      <option value="Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
+      <option value="In Progress" {% if request.GET.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+      <option value="Resolved" {% if request.GET.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+    </select>
 
-        <strong>{{ complaint.category|title }}</strong> — {{ complaint.status }}
-        <br>
-        {{ complaint.description }}
-        <br>
-        <small>Submitted: {{ complaint.created_at|date:"d M Y, H:i" }}</small>
-        <br>
-        <a href="{% url 'complaint_detail' complaint.id %}">View Details</a>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>You have not submitted any complaints yet.</p>
-{% endif %}
+    <select name="category" class="form-select w-auto">
+      <option value="">All Categories</option>
+      <option value="Road" {% if request.GET.category == 'Road' %}selected{% endif %}>Road</option>
+      <option value="Water" {% if request.GET.category == 'Water' %}selected{% endif %}>Water</option>
+      <option value="Electricity" {% if request.GET.category == 'Electricity' %}selected{% endif %}>Electricity</option>
+      <!-- Add more categories if needed -->
+    </select>
+
+    <button type="submit" class="btn btn-outline-primary">Filter</button>
+  </form>
+
+  <!-- Complaint Cards -->
+  {% if complaints %}
+    <div class="row">
+      {% for complaint in complaints %}
+        <div class="col-md-6 mb-4">
+          <div class="card shadow-sm border-left-primary">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">{{ complaint.category|title }}</h5>
+                <span class="badge 
+                  {% if complaint.status == 'Pending' %} bg-warning 
+                  {% elif complaint.status == 'Resolved' %} bg-success 
+                  {% elif complaint.status == 'In Progress' %} bg-info 
+                  {% else %} bg-secondary {% endif %}">
+                  {{ complaint.status }}
+                </span>
+              </div>
+
+              <p class="card-text mt-2">{{ complaint.description|truncatechars:100 }}</p>
+
+              {% if complaint.image %}
+                <img src="{{ complaint.image.url }}" alt="Complaint Image" class="img-fluid rounded mb-2" style="max-height: 200px;">
+              {% endif %}
+
+              <!-- AI Summary & Tone -->
+              <p class="small text-muted">🧠 AI Summary: {{ complaint.summary|truncatechars:80 }}</p>
+              <p class="small">🎭 Tone: 
+                {% if complaint.tone == "Negative" %}
+                  <span class="text-danger">{{ complaint.tone }}</span>
+                {% elif complaint.tone == "Positive" %}
+                  <span class="text-success">{{ complaint.tone }}</span>
+                {% else %}
+                  <span class="text-secondary">{{ complaint.tone }}</span>
+                {% endif %}
+              </p>
+
+              <small class="text-muted">📅 Submitted: {{ complaint.created_at|date:"d M Y, H:i" }}</small><br>
+
+              <!-- View Details Button -->
+              <a href="{% url 'complaint_detail' complaint.id %}" class="btn btn-sm btn-outline-primary mt-2">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center mt-5">
+      <h4 class="alert-heading">No Complaints Yet 😌</h4>
+      <p>Looks like you haven’t submitted any complaints. Click below to raise one!</p>
+      <a href="{% url 'submit_complaint' %}" class="btn btn-primary">Submit Complaint</a>
+    </div>
+  {% endif %}
+</div>
 
 {% endblock %}

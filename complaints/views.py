@@ -6,7 +6,7 @@ from .forms import ComplaintForm, StatusUpdateForm, CustomUserCreationForm
 def home(request):
     return render(request, 'complaints/base.html')
 
-@login_required
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -75,3 +75,21 @@ def submit_complaint(request):
     else:
         form = ComplaintForm()
     return render(request, 'complaints/submit_complaint.html', {'form': form})
+from datetime import timedelta
+
+def get_resolution_time(complaint):
+    if complaint.status == 'Resolved' and complaint.resolved_at:
+        return complaint.resolved_at - complaint.created_at
+    return None
+@login_required
+def filter_complaints(request):
+    complaints = Complaint.objects.all()
+    status_filter = request.GET.get('status')
+    category_filter = request.GET.get('category')
+
+    if status_filter:
+        complaints = complaints.filter(status=status_filter)
+    if category_filter:
+        complaints = complaints.filter(category=category_filter)
+
+    return render(request, 'complaints/filtered_complaints.html', {'complaints': complaints})

@@ -23,3 +23,7 @@ db.sqlite3
 # MacOS / Windows system files
 .DS_Store
 Thumbs.db
+
+# coverage
+htmlcov/
+.coverage
