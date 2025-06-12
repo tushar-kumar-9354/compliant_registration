@@ -1,6 +1,10 @@
+import os
+
 import google.generativeai as genai 
 
-GEMINI_API_KEY = "AIzaSyACNX0dTD1sigImYxt-llBxWdu6chty38s"  # Replace with your actual key
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable not set")
 
 # Configure the Gemini client
 genai.configure(api_key=GEMINI_API_KEY)

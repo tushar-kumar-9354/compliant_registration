@@ -2,7 +2,7 @@
 
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyACNX0dTD1sigImYxt-llBxWdu6chty38s")
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-2.0-flash")
 
@@ -57,6 +57,7 @@ def is_toxic(content: str) -> bool:
     return any(word in content for word in toxic_keywords)
 
 from sentence_transformers import SentenceTransformer, util 
+import os
 
 embed_model = SentenceTransformer('all-MiniLM-L6-v2')
 
