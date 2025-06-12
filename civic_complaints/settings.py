@@ -5,7 +5,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-import os
+
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key-for-dev')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
