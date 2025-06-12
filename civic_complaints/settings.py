@@ -12,7 +12,8 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key-for-dev')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['*']  # for now, to test
+
 
 
 # APPLICATION DEFINITIONS
