@@ -1,18 +1,17 @@
-# render.yaml (place in root directory)
 services:
   - type: web
     name: complaint-registration
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: gunicorn civic_complaints.wsgi:application --bind 0.0.0.0:$PORT
-
-
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: civic_complaints.settings
       - key: SECRET_KEY
-        value: your_django_secret_key
+        value: your_real_django_secret
       - key: DEBUG
         value: False
       - key: GEMINI_API_KEY
-        value: your_actual_gemini_api_key
+        value: your_real_gemini_key
+      - key: RENDER
+        value: true

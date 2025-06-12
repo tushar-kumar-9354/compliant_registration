@@ -1,20 +1,16 @@
 import os
+import sys
 from pathlib import Path
 
 # BASE DIRECTORY
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-
-
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-
+# SECRET & GEMINI KEY FROM ENV
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key-for-dev')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']  # for now, to test
-
-
+ALLOWED_HOSTS = ['*']
 
 # APPLICATION DEFINITIONS
 INSTALLED_APPS = [
@@ -26,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'complaints',  # your app
-      # optional: for better form rendering
 ]
 
 MIDDLEWARE = [
@@ -44,7 +39,7 @@ ROOT_URLCONF = 'civic_complaints.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # not using a global templates folder
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -57,26 +52,30 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'civic_complaints.wsgi.application'
 
-# ✅ DATABASE CONFIG - PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_database',  # replace with your database name
-        'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '5432',
+# ✅ DATABASE CONFIG
+if os.environ.get("RENDER") == "true" or 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-import sys
-if 'test' in sys.argv:
-    DATABASES['default'] = {'ENGINE': 'django.db.backends.sqlite3'}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'my_database',         # Replace with actual name
+            'USER': 'postgres',
+            'PASSWORD': '12345',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
+
 # ✅ CUSTOM USER MODEL
 AUTH_USER_MODEL = 'complaints.User'
-
 
 # ✅ PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
@@ -112,6 +111,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # ✅ MEDIA FILES
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # ✅ DEFAULT PRIMARY KEY FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -120,16 +120,11 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
-# ✅ Crispy Forms (optional)
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# settings.py
-
+# ✅ EMAIL SETTINGS (using Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-
-EMAIL_HOST_USER = 'useownemail@gmail.com'         # Your email
-EMAIL_HOST_PASSWORD = 'xdycxnvblsudapog'        # App Password (not your real password!)
+EMAIL_HOST_USER = 'useownemail@gmail.com'         # Replace with your Gmail
+EMAIL_HOST_PASSWORD = 'xdycxnvblsudapog'           # App password (not Gmail password!)
