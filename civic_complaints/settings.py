@@ -126,5 +126,5 @@ EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-EMAIL_HOST_USER = 'jangratushar348@gmail.com'         # Your email
+EMAIL_HOST_USER = 'useownemail@gmail.com'         # Your email
 EMAIL_HOST_PASSWORD = 'xdycxnvblsudapog'        # App Password (not your real password!)
