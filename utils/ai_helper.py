@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import google.generativeai as genai 
 
 GEMINI_API_KEY = "AIzaSyDUKAYNttTpvyilioaF9BfbPDEmw6g2ljQ"  # Replace with your actual key
 
