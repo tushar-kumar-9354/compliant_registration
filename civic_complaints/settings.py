@@ -1,19 +1,22 @@
-import dj_database_url
 import os
 import sys
+import dj_database_url
 from pathlib import Path
 
-# BASE DIRECTORY
+# ✅ BASE DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET & GEMINI KEY FROM ENV
+# ✅ SECRET & API KEY
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key-for-dev')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+IS_RENDER = os.environ.get("RENDER") == "true"
 
+# ✅ HOSTS
 ALLOWED_HOSTS = ['*']
 
-# APPLICATION DEFINITIONS
+# ✅ INSTALLED APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -21,23 +24,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'complaints',  # your app
 ]
 
+# ✅ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # static files in prod
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+# ✅ URL & WSGI
 ROOT_URLCONF = 'civic_complaints.urls'
+WSGI_APPLICATION = 'civic_complaints.wsgi.application'
 
+# ✅ TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -54,20 +60,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'civic_complaints.wsgi.application'
-import dj_database_url
-import os
-import sys
-
-# Render automatically sets RENDER env var to "true"
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-IS_RENDER = os.environ.get("RENDER") == "true"
-
+# ✅ DATABASES
 if IS_RENDER:
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
-            default='postgres://renderuser:renderpass@localhost:5432/renderdb'  # fallback, usually ignored
+            default=os.environ.get("DATABASE_URL")
         )
     }
 else:
@@ -82,37 +80,28 @@ else:
         }
     }
 
-# Optional override for tests
+# ✅ Use SQLite for testing
 if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 
-
 # ✅ CUSTOM USER MODEL
 AUTH_USER_MODEL = 'complaints.User'
 
 # ✅ PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 8,
-        }
+        'OPTIONS': {'min_length': 8}
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ✅ LANGUAGE & TIMEZONE
+# ✅ LANGUAGE, TIMEZONE
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
@@ -120,20 +109,10 @@ USE_L10N = True
 USE_TZ = True
 
 # ✅ STATIC FILES
-import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 STATIC_URL = '/static/'
-
-# During development (DEBUG=True), serve static files from `static/` folder
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
-# In production (DEBUG=False), collect static files into `staticfiles/`
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Use Whitenoise in production
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -141,19 +120,23 @@ if not DEBUG:
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# ✅ DEFAULT PRIMARY KEY FIELD
+# ✅ DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ LOGIN/LOGOUT REDIRECTS
+# ✅ LOGIN FLOW
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
-# ✅ EMAIL SETTINGS (using Gmail)
+# ✅ EMAIL (Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'useownemail@gmail.com'         # Replace with your Gmail
-EMAIL_HOST_PASSWORD = 'xdycxnvblsudapog'           # App password (not Gmail password!)
+EMAIL_HOST_USER = 'useownemail@gmail.com'
+EMAIL_HOST_PASSWORD = 'xdycxnvblsudapog'  # app password
+
+# ✅ GEMINI CHECK WARNING (for dev logs)
+if not GEMINI_API_KEY:
+    print("⚠️ Warning: GEMINI_API_KEY not set. Gemini AI features will not work.")
