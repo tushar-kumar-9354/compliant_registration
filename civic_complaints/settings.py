@@ -1,3 +1,4 @@
+import dj_database_url
 import os
 import sys
 from pathlib import Path
@@ -32,6 +33,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'civic_complaints.urls'
@@ -53,26 +55,40 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'civic_complaints.wsgi.application'
+import dj_database_url
+import os
+import sys
 
-# ✅ DATABASE CONFIG
-if os.environ.get("RENDER") == "true" or 'test' in sys.argv:
+# Render automatically sets RENDER env var to "true"
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+IS_RENDER = os.environ.get("RENDER") == "true"
+
+if IS_RENDER:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            default='postgres://renderuser:renderpass@localhost:5432/renderdb'  # fallback, usually ignored
+        )
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'my_database',         # Replace with actual name
+            'NAME': 'my_database',
             'USER': 'postgres',
             'PASSWORD': '12345',
             'HOST': 'localhost',
             'PORT': '5432',
         }
     }
+
+# Optional override for tests
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+
 
 # ✅ CUSTOM USER MODEL
 AUTH_USER_MODEL = 'complaints.User'
@@ -104,9 +120,22 @@ USE_L10N = True
 USE_TZ = True
 
 # ✅ STATIC FILES
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_URL = '/static/'
+
+# During development (DEBUG=True), serve static files from `static/` folder
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# In production (DEBUG=False), collect static files into `staticfiles/`
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Use Whitenoise in production
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ✅ MEDIA FILES
 MEDIA_URL = '/media/'

@@ -6,3 +6,4 @@ tzdata==2025.2
 google.generativeai
 gunicorn
 sentence-transformers
+whitenoise
