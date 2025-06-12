@@ -1,8 +1,8 @@
 # complaints/utils/genai.py
 
-import google.generativeai as genai # type: ignore
+import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyDUKAYNttTpvyilioaF9BfbPDEmw6g2ljQ")
+genai.configure(api_key="AIzaSyACNX0dTD1sigImYxt-llBxWdu6chty38s")
 
 model = genai.GenerativeModel("gemini-2.0-flash")
 
@@ -56,7 +56,7 @@ def is_toxic(content: str) -> bool:
     content = content.lower()
     return any(word in content for word in toxic_keywords)
 
-from sentence_transformers import SentenceTransformer, util # type: ignore
+from sentence_transformers import SentenceTransformer, util 
 
 embed_model = SentenceTransformer('all-MiniLM-L6-v2')
 
