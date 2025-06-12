@@ -1,0 +1,12 @@
+# render.yaml (place in the root of your project)
+services:
+  - type: web
+    name: your-project-name
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn your_project_name.wsgi:application  # for Django
+    # OR for FastAPI:
+    # startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: your_project_name.settings
